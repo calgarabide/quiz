@@ -14,10 +14,7 @@ if(!process.env.DATABASE_URL) {
 }
 
 //Usar BBDD SQLite:
-var sequelize = new Sequelize(url, 
-                              {storage: storage,
-                                omitNull: true
-                              });
+var sequelize = new Sequelize(url, { storage: storage, omitNull: true });
                       
 
 // Importar la definicion de la tabla Quiz de quiz.js
@@ -25,10 +22,7 @@ var Quiz = sequelize.import(path.join(__dirname,'quiz'));
 
 // sequelize.sync() crea e inicializa tabla de preguntas en DB
 sequelize.sync().then(function(){ // sync() crea la tabla quiz
-  return
-    Quiz
-    .count()
-    .then(function (c) {
+  return Quiz.count().then(function (c) {
       if (c === 0){ // la tabla se inicializa si está vacía
         return Quiz.create({question: 'Capital de Italia', answer: 'Roma' }).then(function() {
             console.log('Base de datos inicializada con datos');
