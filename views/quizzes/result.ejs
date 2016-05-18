@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <title>Quiz</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-   <p> La respuesta <strong> <%= answer %> </strong> es <%= result %> </p>
-	
-   <p> <a href="/question?answer=<%= answer%>"> Inténtelo otra vez </a> </p>
-  </body>
-</html>
+
+		<p>
+			La respuesta <strong> <%= answer %></strong> es <%= result %>.
+		</p>
+
+		<p>
+			<a href="/quizzes/<%= quiz.id %>?answer=<%= answer %>"> Inténtelo otra vez </a>
+		</p>
+
