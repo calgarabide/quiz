@@ -14,9 +14,16 @@ exports.load = function(req, res, next, quizId){
 
 // GET/quizzes
 exports.index = function(req, res, next){
-	models.Quiz.findAll().then(function(quizzes) {
+		if(req.query.search === undefined){
+		models.Quiz.findAll().then(function(quizzes) {
 		res.render('quizzes/index.ejs', {quizzes: quizzes});
-	}).catch(function(error) { next(error); });
+		}).catch(function(error) { next(error); });
+	} else {
+		var buscar = req.query.search.replace(/\s/g,"%");
+		models.Quiz.findAll({where: ["question like ?", "%"+buscar+"%"]}).then(function(quizzes){
+		res.render('quizzes/index.ejs', {quizzes: quizzes});
+		}).catch(function(error) { next(error); });
+	}
  };
 
 // GET /quizzes/:id
