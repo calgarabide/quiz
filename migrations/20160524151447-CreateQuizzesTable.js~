@@ -21,6 +21,6 @@ module.exports = {
     );
   },
   down: function (queryInterface, Sequelize) {
-        return queryInterface.dropTable('quizzes');
+        return queryInterface.dropTable('Quizzes');
   }
 };
