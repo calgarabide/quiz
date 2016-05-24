@@ -8,8 +8,8 @@ var Sequelize = require('sequelize');
 // Usar BBDD Postgres:
 //DATABASE_URL = "postgres://xrpqjupolbysop:owiXEDLT72YgAuMoGnl-uDD_fA@ec2-50-19-242-27.compute-1.amazonaws.com:5432/dbm92297nqfv7q";
 
-var url = DATABASE_URL;
-var storage = DATABASE_STORAGE || "";
+//var url = DATABASE_URL;
+//var storage = DATABASE_STORAGE || "";
 var url, storage;
 
 if(!process.env.DATABASE_URL) {
