@@ -4,8 +4,7 @@ var url = require('url');
 
 var authenticate = function(login, password) {
     
-    return models.User.findOne({where: {username: login}})
-        .then(function(user) {
+    return models.User.findOne({where: {username: login}}).then(function(user) {
             if (user && user.verifyPassword(password)) {
                 return user;
             } else {
@@ -31,11 +30,11 @@ exports.create = function(req, res, next) {
     var login     = req.body.login;
     var password  = req.body.password;
 
-    authenticate(login, password)
-        .then(function(user) {
+    authenticate(login, password).then(function(user) {
             if (user) {
 
-                req.session.user = {id:user.id, username:user.username};
+                var timeout = +(new Date()) + 120000;
+                req.session.user = { id: user.id, username: user.username, timeout: timeout };
 
                 res.redirect(redir); // redirección a redir
             } else {
@@ -55,4 +54,11 @@ exports.destroy = function(req, res, next) {
     delete req.session.user;
 
     res.redirect("/session"); // redirect a login
+};
+exports.loginRequired = function(req, res, next) {
+    if(req.session.user) {
+        next();
+    } else {
+        res.redirect('/session/redir=' + (req.param('redir') || req.url));
+    }
 };
