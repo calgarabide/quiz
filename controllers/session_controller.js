@@ -34,7 +34,7 @@ exports.create = function(req, res, next) {
             if (user) {
 
                 var timeout = +(new Date()) + 120000;
-                req.session.user = { id: user.id, username: user.username, timeout: timeout };
+                req.session.user = { id: user.id, username: user.username, timeout: timeout, isAdmin:user.isAdmin };
 
                 res.redirect(redir); // redirección a redir
             } else {

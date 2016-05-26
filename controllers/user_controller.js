@@ -16,6 +16,35 @@ exports.load = function(req, res, next, userId) {
         .catch(function(error) { next(error); });
 };
 
+// MW que permite gestionar un usuario si el usuario logeado es admin o el usuario a gestionar.
+exports.adminOrMyselfRequired = function(req, res, next){
+
+    var isAdmin     = req.session.user.isAdmin;
+    var userId      = req.user.id;
+    var loggedUserId    = req.session.user.id;
+
+    if (isAdmin || userId === loggedUserId) {
+        next();
+    } else {
+      console.log('Ruta prohibida: no es el usuario logeado, ni un administrador.');
+      res.send(403);
+    }
+};
+
+// MW que permite gestionar un usuario solamente si el usuario logeado es admin y NO el usuario a gestionar
+exports.adminAndNotMyselfRequired = function(req, res, next) {
+
+    var isAdmin     = req.session.user.isAdmin;
+    var userId      = req.user.id;
+    var loggedUserId    = req.session.user.id;
+
+    if (isAdmin && userId !== loggedUserId) {
+       next();
+    } else {
+        console.log('Ruta prohibida: no es el usuario logeado, ni un administrador.');
+        res.send(403);
+    }
+};
 
 // GET /users
 exports.index = function(req, res, next) {
