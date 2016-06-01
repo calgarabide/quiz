@@ -2,6 +2,7 @@ var models = require('../models');
 var Sequelize = require('sequelize');
 var cloudinary = require('cloudinary');
 var fs = require('fs');
+var Promise = require('promise');
 
 // Opciones para imagenes subidas a Cloudinary
 var cloudinary_image_options = { crop: 'limit', width: 200, height: 200, radius: 5, border: "3px_solid_blue", tags: ['core', 'quiz-2016'] };
@@ -193,7 +194,6 @@ exports.check = function(req, res, next) {
                        result: result, 
                        answer: answer});
 };
-
 // FUNCIONES AUXILIARES
 
 /**
@@ -213,11 +213,10 @@ function createAttachment(req, uploadResult, quiz) {
         req.flash('success', 'Imagen nueva guardada con éxito.');
     })
     .catch(function(error) { // Ignoro errores de validacion en imagenes
-        req.flash('error', 'No se ha podido salvar la nueva imagen(1): '+error.message);
+        req.flash('error', 'No se ha podido salvar la nueva imagen: '+error.message);
         cloudinary.api.delete_resources(uploadResult.public_id);
     });
 }
-
 
 
 /**
@@ -249,10 +248,11 @@ function updateAttachment(req, uploadResult, quiz) {
         }
     })
     .catch(function(error) { // Ignoro errores de validacion en imagenes
-        req.flash('error', 'No se ha podido salvar la nueva imagen(2): '+error.message);
+        req.flash('error', 'No se ha podido salvar la nueva imagen: '+error.message);
         cloudinary.api.delete_resources(uploadResult.public_id);
     });
 }
+
 
 /**
  * Crea una promesa para subir una imagen nueva a Cloudinary. 
@@ -272,7 +272,7 @@ function uploadResourceToCloudinary(req) {
                 if (! result.error) {
                     resolve({ public_id: result.public_id, url: result.secure_url });
                 } else {
-                    req.flash('error', 'No se ha podido salvar la nueva imagen(3): '+result.error.message);
+                    req.flash('error', 'No se ha podido salvar la nueva imagen: '+result.error.message);
                     resolve(null);
                 }
             },
@@ -280,3 +280,5 @@ function uploadResourceToCloudinary(req) {
         );
     })
 }
+
+        

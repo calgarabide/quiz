@@ -47,7 +47,7 @@ app.use(function(req, res, next) {
   next();
     }
     else {   // Si el usuario está logueado
-  if ((timer.getTime() - user.timeout) >= 10000) {
+  if ((timer.getTime() - user.timeout) >= 120000) {
       delete req.session.user;
       next();
   }
