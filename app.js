@@ -4,32 +4,32 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
 var partials = require('express-partials');
+var session = require('express-session');
 var flash = require('express-flash');
 var methodOverride = require('method-override');
 
-
 var routes = require('./routes/index');
+
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(partials());
-app.use(flash());
-
-
-// uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({secret: "Quiz 2016", resave: false, saveUnitialized: true}));
+app.use(session({secret: "Quiz 2016",
+     resave: false,
+     saveUninitialized: true}));
 app.use(methodOverride('_method', {methods: ["POST", "GET"]}));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(partials());
+app.use(flash());
 
 // Helper dinamico:
 app.use(function(req, res, next) {
@@ -41,18 +41,21 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(req, res, next) {
-  if(req.session.user) {
-    var timeout = 120000;
-    if((+(new Date()) - req.session.user.inicio) >= timeout ) {
+    var user = req.session.user;
+    var timer = new Date();
+    if (!user) { // Si el usuario no está logueado
+  next();
+    }
+    else {   // Si el usuario está logueado
+  if ((timer.getTime() - user.timeout) >= 10000) {
       delete req.session.user;
       next();
-    } else {
-      req.session.user.inicio = +(new Date());
-      next();
-    }
-  } else {
-    next();
   }
+  else {
+      user.timeout = new Date().getTime();
+      next();
+  }
+    }
 });
 
 app.use('/', routes);

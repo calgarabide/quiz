@@ -12,16 +12,16 @@ module.exports = {
      QuizId:  { type: Sequelize.INTEGER, 
       allowNull: false 
      },
-     public_id: { type: Sequelize.INTEGER, 
+     public_id: { type: Sequelize.STRING, 
       allowNull: false 
      },
-     url:  { type: Sequelize.INTEGER, 
+     url:  { type: Sequelize.STRING, 
        allowNull: false 
      },
-     filename:  { type: Sequelize.INTEGER, 
+     filename:  { type: Sequelize.STRING, 
       allowNull: false 
      },
-     mime:  { type: Sequelize.INTEGER, 
+     mime:  { type: Sequelize.STRING, 
         allowNull: false 
      },
      createdAt: { type: Sequelize.DATE, 

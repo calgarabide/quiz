@@ -4,19 +4,19 @@ var cloudinary = require('cloudinary');
 var fs = require('fs');
 
 // Opciones para imagenes subidas a Cloudinary
-var cloudinary_image_options = { crop: 'limit', width: 200, height: 200, radius: 5, border: "epx_solid_blue", tags: ['core', 'quiz-2016'] };
+var cloudinary_image_options = { crop: 'limit', width: 200, height: 200, radius: 5, border: "3px_solid_blue", tags: ['core', 'quiz-2016'] };
 
 // Autoload el quiz asociado a :quizId
 exports.load = function(req, res, next, quizId) {
-	models.Quiz.findById(quizId, { include: [ models.Comment, models.Attachment ] }).then(function(quiz) {
-		if (quiz) {
-			req.quiz = quiz;
-			next();
-		}
-		else {
-			throw(new Error('No existe quizId=' + quizId));
-		}
-	}).catch(function(error) { next(error); });
+    models.Quiz.findById(quizId, { include: [ models.Comment, models.Attachment ] }).then(function(quiz) {
+        if (quiz) {
+            req.quiz = quiz;
+            next();
+        }
+        else {
+            throw(new Error('No existe quizId=' + quizId));
+        }
+    }).catch(function(error) { next(error); });
 };
 
 // MW que permite acciones solo si el usuario es admin o autor del quiz
@@ -36,35 +36,35 @@ exports.ownershipRequired = function(req, res, next) {
 
 // GET /quizzes
 exports.index = function(req, res, next) {
-	if(req.query.search === undefined){
- 		models.Quiz.findAll({ include: [ models.Attachment ]}).then(function(quizzes) {
-			if ((req.params.format === undefined) || (req.params.format === 'htm1')) {
-				res.render('quizzes/index.ejs', {quizzes: quizzes});
-			} else if (req.params.format === 'json') {
-				res.send(JSON.stringify(quizzes));
-			}
-		}).catch(function(error) { next(error); });
-	} else {
-		var buscar = req.query.search.replace(/\s/g,"%");
-		models.Quiz.findAll({where: ["question like ?", "%"+buscar+"%"], order: 'question ASC'}).then(function(quizzes){
-			if ((req.params.format === undefined) || (req.params.format === 'htm1')) {
-				res.render('quizzes/index.ejs', {quizzes: quizzes});
-			} else if (req.params.format === 'json') {
-				res.send(JSON.stringify(quizzes));
-			}
-		}).catch(function(error) { next(error); });
-	}
+    if(req.query.search === undefined){
+        models.Quiz.findAll({ include: [ models.Attachment ]}).then(function(quizzes) {
+            if ((req.params.format === undefined) || (req.params.format === 'htm1')) {
+                res.render('quizzes/index.ejs', {quizzes: quizzes});
+            } else if (req.params.format === 'json') {
+                res.send(JSON.stringify(quizzes));
+            }
+        }).catch(function(error) { next(error); });
+    } else {
+        var buscar = req.query.search.replace(/\s/g,"%");
+        models.Quiz.findAll({where: ["question like ?", "%"+buscar+"%"], order: 'question ASC'}).then(function(quizzes){
+            if ((req.params.format === undefined) || (req.params.format === 'htm1')) {
+                res.render('quizzes/index.ejs', {quizzes: quizzes});
+            } else if (req.params.format === 'json') {
+                res.send(JSON.stringify(quizzes));
+            }
+        }).catch(function(error) { next(error); });
+    }
 };
 
 // GET /quizzes/new
 exports.new = function(req, res, next) {
-	var quiz = models.Quiz.build({question: "", answer: ""});
-	res.render('quizzes/new', {quiz: quiz});
+    var quiz = models.Quiz.build({question: "", answer: ""});
+    res.render('quizzes/new', {quiz: quiz});
 };
 
 // POST /quizzes/create
 exports.create = function(req, res, next) {
-	
+    
     var authorId = req.session.user && req.session.user.id || 0;
     var quiz = { question: req.body.question, 
                  answer:   req.body.answer,
@@ -105,13 +105,13 @@ exports.create = function(req, res, next) {
 
 // GET /quizzes/:quizId/edit
 exports.edit = function(req, res, next) {
-	var quiz = req.quiz;	// req.quiz: autoload de instancia de quiz
-	res.render('quizzes/edit', {quiz: quiz});
+    var quiz = req.quiz;    // req.quiz: autoload de instancia de quiz
+    res.render('quizzes/edit', {quiz: quiz});
 };
 
 // PUT /quizzes/:quizId
 exports.update = function(req, res, next) {
-	
+    
     req.quiz.question = req.body.question;
     req.quiz.answer   = req.body.answer;
 
@@ -165,33 +165,33 @@ exports.destroy = function(req, res, next) {
 
     req.quiz.destroy()
       .then( function() {
-  	  req.flash('success', 'Quiz borrado con éxito.');
+      req.flash('success', 'Quiz borrado con éxito.');
           res.redirect('/quizzes');
       })
       .catch(function(error){
-  	  req.flash('error', 'Error al editar el Quiz: '+error.message);
+      req.flash('error', 'Error al editar el Quiz: '+error.message);
         next(error);
       });
 };
 
 // GET /quizzes/:id
 exports.show = function(req, res, next) {
-	var answer = req.query.answer || '';
-	if ((req.params.format === undefined) || (req.params.format === 'htm1')) {
-		res.render('quizzes/show', {quiz: req.quiz, 
-				    answer: answer});
-	} else if (req.params.format === 'json') {
-		res.send(JSON.stringify(req.quiz));
-	}
+    var answer = req.query.answer || '';
+    if ((req.params.format === undefined) || (req.params.format === 'htm1')) {
+        res.render('quizzes/show', {quiz: req.quiz, 
+                    answer: answer});
+    } else if (req.params.format === 'json') {
+        res.send(JSON.stringify(req.quiz));
+    }
 };
 
 // GET /quizzes/:id/check
 exports.check = function(req, res, next) {
-	var answer = req.query.answer || '';
-	var result = answer === req.quiz.answer ? 'Correcta' : 'Incorrecta';
-	res.render('quizzes/result', { quiz: req.quiz, 
-				       result: result, 
-				       answer: answer});
+    var answer = req.query.answer || '';
+    var result = answer === req.quiz.answer ? 'Correcta' : 'Incorrecta';
+    res.render('quizzes/result', { quiz: req.quiz, 
+                       result: result, 
+                       answer: answer});
 };
 
 // FUNCIONES AUXILIARES
