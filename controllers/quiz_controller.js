@@ -213,10 +213,12 @@ function createAttachment(req, uploadResult, quiz) {
         req.flash('success', 'Imagen nueva guardada con éxito.');
     })
     .catch(function(error) { // Ignoro errores de validacion en imagenes
-        req.flash('error', 'No se ha podido salvar la nueva imagen: '+error.message);
+        req.flash('error', 'No se ha podido salvar la nueva imagen(1): '+error.message);
         cloudinary.api.delete_resources(uploadResult.public_id);
     });
 }
+
+
 
 /**
  * Crea una promesa para actualizar un attachment en la tabla Attachments.
@@ -247,7 +249,7 @@ function updateAttachment(req, uploadResult, quiz) {
         }
     })
     .catch(function(error) { // Ignoro errores de validacion en imagenes
-        req.flash('error', 'No se ha podido salvar la nueva imagen: '+error.message);
+        req.flash('error', 'No se ha podido salvar la nueva imagen(2): '+error.message);
         cloudinary.api.delete_resources(uploadResult.public_id);
     });
 }
@@ -270,7 +272,7 @@ function uploadResourceToCloudinary(req) {
                 if (! result.error) {
                     resolve({ public_id: result.public_id, url: result.secure_url });
                 } else {
-                    req.flash('error', 'No se ha podido salvar la nueva imagen: '+result.error.message);
+                    req.flash('error', 'No se ha podido salvar la nueva imagen(3): '+result.error.message);
                     resolve(null);
                 }
             },
